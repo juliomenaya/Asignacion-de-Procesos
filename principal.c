@@ -40,6 +40,10 @@ int menu(int argc, char nombre[]){
 	}
 	printf("\nEl archivo *%s* se accedio correctamente..\n",nombre);
 	registros=num_regs(archi);		//Obtiene la cantidad de registros que hay en el archivo
+	if(registros == 1){
+		printf("\nEl archivo esta vacio \n");
+		return -1;
+	}
 	guarda(archi,registros);
 	fclose(archi);
 	return 0;
@@ -76,32 +80,21 @@ void guarda(FILE *archivo,int tamanio){
 		tmp=fscanf(archivo,"%c %d\n",&registros[i].id,&registros[i].tiempo);
 		i++;
 	}while(tmp==2);
-	
 	qsort(registros,tamanio,sizeof(Registro),compara);
-	
-	for(i=0;i<tamanio;i++){
-		time_return+=registros[i].tiempo;
-		printf("\n\nEl proceso %c entro en ejecucion",registros[i].id);
-		printf(" con %d tiempos de procesador\n",registros[i].tiempo);
-		printf("\ntiempo de retorno... %d\n\n",time_return);
-	}
-	printf("\n\n\n###Se termino de atender a todos los procesos###\n\n\n");
-	promedio=(time_return/(float)tamanio);
-	printf("\nEl tiempo promedio de retorno es %.2f\n",promedio);
-	free(registros);
+	procesador(registros,tamanio);
 	return;
 }
 //Funcion que "ejecuta" los procesos leidos
 void procesador(Registro *reg,int tamanio){
-	
-	int i,time_return=0;
+	int i,time_return=0,entrada=0;
 	float promedio; 
-	printf("\ntamanio %d\n",tamanio);
 	for(i=0;i<tamanio;i++){
 		time_return+=reg[i].tiempo;
 		printf("\n\nEl proceso %c entro en ejecucion",reg[i].id);
 		printf(" con %d tiempos de procesador\n",reg[i].tiempo);
+		printf("tiempo de entrada %d ",entrada);
 		printf("\ntiempo de retorno... %d\n\n",time_return);
+		entrada+=reg[i].tiempo;
 	}
 	printf("\n\n\n###Se termino de atender a todos los procesos###\n\n\n");
 	promedio=(time_return/(float)tamanio);
